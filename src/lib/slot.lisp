@@ -11,7 +11,7 @@
            :required))
 (in-package :annot.slot)
 
-(defun required-argument (name)
+(defun required-argument (name)         ; (y2q) too obscure..
   (error "Must supply ~S" name))
 
 (defmacro def-slot-annotation (name args &body body)
@@ -24,6 +24,12 @@
                (list ,slot-specifier))
          ,@body
          (cons slot-name slot-options)))))
+
+;;; (y2q) moved from utils.lisp -- it seems used only by this file.
+(defun plist-member (plist prop)
+  "Return t if PLIST contains PROP as a property."
+  (let ((undef '#:undef))               ; (y2q) why don't use `get-properties'?
+    (not (eq (getf plist prop undef) undef))))
 
 (def-slot-annotation optional (init-form)
   (unless (plist-member slot-options :initarg)

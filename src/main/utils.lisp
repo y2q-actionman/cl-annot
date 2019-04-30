@@ -2,9 +2,7 @@
 (defpackage cl-annot.util
   (:nicknames :annot.util)
   (:use :cl)
-  (:export ;; General
-           :plist-member
-           :plist-get-all
+  (:export 
            ;; Macros
            :macrop
            :macroexpand-some
@@ -24,17 +22,6 @@
            :get-class-option))
 (in-package :annot.util)
 
-(defun plist-member (plist prop)
-  "Return t if PLIST contains PROP as a property."
-  (let ((undef '#:undef))
-    (not (eq (getf plist prop undef) undef))))
-
-(defun plist-get-all (plist prop)
-  "Return all values in PLIST named PROP."
-  (loop for (name value) on plist by #'cddr
-        if (string= prop name)
-          collect value))
-
 (defun macrop (symbol)
   "Return non-nil if SYMBOL is a macro."
   (and (symbolp symbol)
@@ -46,11 +33,17 @@
   (multiple-value-bind (new-form expanded-p)
       (macroexpand-1 form)
     (if (or (not expanded-p) (null new-form))
-        (values form nil)
+        (values form nil) ; (y2q) 展開結果が nil だった場合に、元の form を返す理由はなんだろう？
         (values new-form expanded-p))))
 
 (defun macroexpand-until-normal-form (form)
   "Expand FORM until it brecomes normal-form."
+  ;; (y2q) What is 'normal'?
+  ;; Code says:
+  ;; - Its car is a macro symbol in common-lisp package. What it means?
+  ;; - If FORM is not expanded, the original FORM is returned. This is just `macroexpand-1'.
+  ;; - If FORM is expanded to nil, the original FORM is returned. What?
+  ;; What is the difference from `macroexpand'? (stopping at 'CL' package?)
   (if (and (consp form)
            (macrop (car form))
            (let ((package (symbol-package (car form))))
@@ -80,6 +73,10 @@ MACROEXPAND-UNTIL-NORMAL-FORM."
 function, the function will be called with the last form and used for
 replacing. If macro forms seen, the macro forms will be expanded using
 MACROEXPAND-UNTIL-NORMAL-FORM."
+  ;; (y2q) I think the order of arguments should be: (PROGN-FORM LAST).
+  ;; A strange point: many annot finds the definition-form by
+  ;; this function. But it returns only last one -- what occurs two or more expansion?
+  ;; What we want is a one like `flatten-progn'.
   (let ((progn-form (macroexpand-until-normal-form progn-form)))
     (if (and (consp progn-form)
              (eq (car progn-form) 'progn))
@@ -103,6 +100,8 @@ MACROEXPAND-UNTIL-NORMAL-FORM."
 (defun definition-form-type (definition-form)
   "Return the type of DEFINITION-FORM."
   (let* ((form (progn-form-last definition-form))
+         ;; (y2q) Because `progn-form-last' does not see if it is not `progn', this is weird.
+         ;; -- what occurs on `let'?
          (type (when (consp form)
                  (car form))))
     type))

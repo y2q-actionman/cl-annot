@@ -53,6 +53,14 @@
        (defstruct (get-accessors-in-defstruct class-definition-form))))
    class-definition-form))
 
+;;; (y2q) moved from utils.lisp -- it seems used only by this file.
+(defun plist-get-all (plist prop)
+  "Return all values in PLIST named PROP."
+  ;; (y2q) this is too slow.. I think it should call `get-properties' some times.
+  (loop for (name value) on plist by #'cddr
+        if (string= prop name)
+          collect value))
+
 (defun get-accessors-in-defclass (class-definition-form)
   (loop for slot-specifier in (slot-specifiers class-definition-form)
      for slot-options = (when (consp slot-specifier) (cdr slot-specifier))
