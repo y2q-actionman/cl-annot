@@ -10,6 +10,10 @@
 (defun expand-annotation (annot args)
   "Expand ANNOT. ARGS will be expanded prior to this
 form (call-by-value)."
+  ;; (y2q)
+  ;; おそらく、ここで annotation 以降を先に expand することに、ほぼ全ての annotation が依存しているのだが、
+  ;; それをするかどうかは個々の annotation に任されるべきだと思う。
+  ;; ここで展開すると、ユーザー定義の def-系 form に作用する annotation を作ることが出来ないのでは？
   (let ((args (mapcar #'expand-annotation-form args)))
     (values (macroexpand-some `(,annot ,@args)))))
 

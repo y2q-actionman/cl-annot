@@ -18,6 +18,16 @@
                 :symbolicate))
 (in-package :annot.class)
 
+;;; (y2q) moved from utils.lisp -- it seems used only by `get-class-option'.
+(defun class-options (class-definition-form)
+  "Return class-options of CLASS-DEFINITION-FORM."
+  (cdddr class-definition-form))
+
+;;; (y2q) moved from utils.lisp -- it seems used only by this file.
+(defun get-class-option (name class-definition-form)
+  "Return a value of NAME class-option of CLASS-DEFINITION-FORM."
+  (cadr (assoc name (class-options class-definition-form))))
+
 (defannotation metaclass (metaclass class-definition-form)
     (:arity 2)
   (progn-form-replace-last

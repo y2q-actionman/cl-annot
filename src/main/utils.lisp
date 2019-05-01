@@ -18,8 +18,7 @@
            ;; Classes
            :slot-specifiers
            :replace-slot-specifiers
-           :class-options
-           :get-class-option))
+           ))
 (in-package :annot.util)
 
 (defun macrop (symbol)
@@ -142,11 +141,3 @@ result value will be a class definition form also."
          class-definition-form
        `(,type ,name ,supers ,(mapcar function slots) ,@options)))
    class-definition-form))
-
-(defun class-options (class-definition-form)
-  "Return class-options of CLASS-DEFINITION-FORM."
-  (cdddr class-definition-form))
-
-(defun get-class-option (name class-definition-form)
-  "Return a value of NAME class-option of CLASS-DEFINITION-FORM."
-  (cadr (assoc name (class-options class-definition-form))))
