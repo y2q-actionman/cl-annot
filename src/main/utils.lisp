@@ -15,9 +15,6 @@
            :definition-form-type
            ;; Functions
            :replace-function-body
-           ;; Classes
-           :slot-specifiers
-           :replace-slot-specifiers
            ))
 (in-package :annot.util)
 
@@ -105,6 +102,8 @@ MACROEXPAND-UNTIL-NORMAL-FORM."
                  (car form))))
     type))
 
+;;; (y2q) This is not used anywhere.
+#+ ()
 (defun replace-function-body (function function-definition-form)
   "Replace the body of FUNCTION-DEFINITION-FORM by calling FUNCTION
 with name, lambda-list and the body as arguments."
@@ -122,16 +121,8 @@ with name, lambda-list and the body as arguments."
                  ,(funcall function name lambda-list body)))))
    function-definition-form))
 
-(defun slot-specifiers (class-definition-form)
-  "Return class-specifiers of CLASS-DEFINITION-FORM."
-  (case (first class-definition-form)
-    (defclass (nth 3 (progn-form-last class-definition-form)))
-    (defstruct (if (stringp (nth 2 (progn-form-last class-definition-form)))
-		   ;; There's a documentation string, fetch the slots after it
-		   (nthcdr 3 (progn-form-last class-definition-form))
-		   ;; There's no documentation string, fetch the slots
-		   (nthcdr 2 (progn-form-last class-definition-form))))))
-
+;;; (y2q) This is not used anywhere.
+#+ ()
 (defun replace-slot-specifiers (function class-definition-form)
   "Replace slot-specifiers of CLASS-DEFINITION-FORM with FUNCTION. The
 result value will be a class definition form also."

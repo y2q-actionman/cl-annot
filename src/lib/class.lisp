@@ -38,6 +38,17 @@
                  `((:metaclass ,metaclass)))))
    class-definition-form))
 
+;;; (y2q) moved from utils.lisp -- it seems used only by this file.
+(defun slot-specifiers (class-definition-form)
+  "Return class-specifiers of CLASS-DEFINITION-FORM."
+  (case (first class-definition-form)
+    (defclass (nth 3 (progn-form-last class-definition-form)))
+    (defstruct (if (stringp (nth 2 (progn-form-last class-definition-form)))
+		   ;; There's a documentation string, fetch the slots after it
+		   (nthcdr 3 (progn-form-last class-definition-form))
+		   ;; There's no documentation string, fetch the slots
+		   (nthcdr 2 (progn-form-last class-definition-form))))))
+
 (defmacro export-slots (class-definition-form)
   (progn-form-replace-last
    (lambda (class-definition-form)
