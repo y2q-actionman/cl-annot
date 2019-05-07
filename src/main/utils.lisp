@@ -5,7 +5,6 @@
   (:export 
            ;; Macros
            :macrop
-           :macroexpand-some
            :macroexpand-until-normal-form
            ;; Progns
            :progn-form-last
@@ -23,14 +22,6 @@
   (and (symbolp symbol)
        (macro-function symbol)
        t))
-
-(defun macroexpand-some (form)
-  "Expand FORM once. The result form won't be nil."
-  (multiple-value-bind (new-form expanded-p)
-      (macroexpand-1 form)
-    (if (or (not expanded-p) (null new-form))
-        (values form nil) ; (y2q) 展開結果が nil だった場合に、元の form を返す理由はなんだろう？
-        (values new-form expanded-p))))
 
 (defun macroexpand-until-normal-form (form)
   "Expand FORM until it brecomes normal-form."
@@ -84,6 +75,8 @@ MACROEXPAND-UNTIL-NORMAL-FORM."
 
 (defun definition-form-symbol (definition-form)
   "Return the symbol of DEFINITION-FORM."
+  ;; (y2q) このコードは、 form の一つ目 (`defun' など) を見ておらず、とにかく二つ目を引っ張っている。
+  ;; CL の規約に従えば問題はない。
   (let* ((form (progn-form-last definition-form))
          (second (when (consp form)
                    (second form))))
@@ -95,6 +88,7 @@ MACROEXPAND-UNTIL-NORMAL-FORM."
 
 (defun definition-form-type (definition-form)
   "Return the type of DEFINITION-FORM."
+  ;; (y2q) このコード、上の `definition-form-symbol' と合わせて多値に出来そう。
   (let* ((form (progn-form-last definition-form))
          ;; (y2q) Because `progn-form-last' does not see if it is not `progn', this is weird.
          ;; -- what occurs on `let'?

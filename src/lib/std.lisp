@@ -31,6 +31,29 @@
 ;;;; simple one-or-more variables
 ;;;; 
 
+;;; (y2q) 
+#|
+この形式、他の annotation と異なっている。
+`@export' のように次の form に作用するのではなく、 declaration の中身を書きこむだけなのだ。
+
+この annotation が与えるものはこれ。 (これは read macro でなければ, `locally' + `declare' 実装になる。)
+  (let (x)
+    @ignore (x)
+    ...)
+
+
+なぜ以下ではないのか？
+  @ignore (x)
+  (let (x)
+    ...)
+
+
+他の問題として、 `declaim' と `declare' をどうつかうか？ `locally' は要る？とか
+
+
+declare に刺すのがどうしても欲しければ・・ `@@ignore' とか？？
+|#
+
 (defun %declare-list-or-symbol (vars sym)
   (if (listp vars)
       `(declare (,sym ,@vars))
