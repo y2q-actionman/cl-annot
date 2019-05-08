@@ -55,6 +55,8 @@ declare に刺すのがどうしても欲しければ・・ `@@ignore' とか？
 |#
 
 (defun %declare-list-or-symbol (vars sym)
+  ;; (y2q)
+  ;; このコード、 (function fn) が食えないのでは？
   (if (listp vars)
       `(declare (,sym ,@vars))
       `(declare (,sym ,vars))))
