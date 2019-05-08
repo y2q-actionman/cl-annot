@@ -71,6 +71,9 @@ declare に刺すのがどうしても欲しければ・・ `@@ignore' とか？
   "Shorthand for (DECLARE (DYNAMIC-EXTENT ...))."
   (%declare-list-or-symbol vars 'dynamic-extent))
 
+;; (y2q)
+;; このコードは規格違反なコードに展開される。 clhs によると、 `declaration' の Valid
+;; Context は *proclamation only* である。`declare' に展開してはいけない。
 (defannotation declaration* (vars) (:alias declaration :inline t)
   "Shorthand for (DECLARE (DECLARATION ...))."
   (%declare-list-or-symbol vars 'declaration))
