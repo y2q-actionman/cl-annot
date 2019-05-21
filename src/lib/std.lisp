@@ -107,6 +107,7 @@ declare に刺すのがどうしても欲しければ・・ `@@ignore' とか？
 (defannotation optimize* (quality)
     (:alias optimize :inline t)
   "Shorthand for (DECLARE (OPTIMIZE ...))."
+  ;; (y2q) 複数の quality を受け入れていない。(元の構文より劣化している。)
   `(declare (optimize ,quality)))
 
 (defannotation inline* (name)
