@@ -17,6 +17,7 @@
   (when (getf options :inline)
     (setf (annotation-inline-p name) t)))
 
+;;; (y2q) `arity' という値を lambda-list を解析して自動で補完できるはず。
 (defmacro defannotation (name lambda-list options &body body)
   `(progn
      (set-annotation-options ',name ',options)
