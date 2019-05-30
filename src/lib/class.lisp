@@ -131,10 +131,16 @@
                        (lambda (lst) (eq (first lst) :constructor))
                        (mapcar #'ensure-list
                                (cdr (second class-definition-form))))))
+                 ;; (y2q)
+                 ;; This code does not distinguish '(:constructor) from '(:constructor nil).
+                 ;; The former says to use the default (i.e. MAKE-xxx).
                  (if (and (= 1 (length constructor-clauses))
                           (= 2 (length (car constructor-clauses)))
                           (null (cadar constructor-clauses)))
                      class-definition-form
+                     ;; (y2q)
+                     ;; If '(:constructor nil) appeared twice, it comes here, and
+                     ;; will be export 'MAKE-xxx', even it is undefined!
                      `(progn
                         (export
                          ',(or (remove nil (mapcar #'second constructor-clauses))
