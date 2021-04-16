@@ -11,13 +11,11 @@
            :required))
 (in-package :annot.slot)
 
-(defun required-argument (name)         ; (y2q) too obscure..
-  (error "Must supply ~S" name))
-
 (defmacro def-slot-annotation (name args &body body)
   (with-gensyms (slot-specifier)
     `(defannotation ,name ,(append args (list slot-specifier))
          (:inline t :arity ,(1+ (length args)))
+       ;; (y2q) Oh, this macro automagically binds SLOT-NAME and SLOT-OPTIONS !
        (destructuring-bind (slot-name . slot-options)
            (if (consp ,slot-specifier)
                ,slot-specifier
@@ -38,6 +36,9 @@
   (unless (plist-member slot-options :initform)
     (setf (getf slot-options :initform) init-form)))
 
+(defun required-argument (name)         ; (y2q) too obscure..
+  (error "Must supply ~S" name))
+
 (def-slot-annotation required ()
   (when (plist-member slot-options :initform)
     (error "Required slot ~A must not have :initform" slot-name))
@@ -45,4 +46,5 @@
     (setf (getf slot-options :initarg)
           (make-keyword slot-name)))
   (setf (getf slot-options :initform)
+        ;; (y2q) I think it should uses `cerror'.
         `(required-argument ,(getf slot-options :initarg))))

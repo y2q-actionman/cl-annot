@@ -19,6 +19,7 @@
 
 ;;; (y2q) `arity' という値を lambda-list を解析して自動で補完できるはず。
 (defmacro defannotation (name lambda-list options &body body)
+  ;; (y2q) `options' can be written with `&key'.
   `(progn
      (set-annotation-options ',name ',options)
      (defmacro ,name ,lambda-list ,@body)))
